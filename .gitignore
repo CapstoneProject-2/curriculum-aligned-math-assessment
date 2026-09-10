@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Source evaluation data and generated artifacts are not distributed.
+data/*.xlsx
+data/*.csv
+results/*.xlsx
+results/*.csv
+!data/README.md
+!results/README.md
