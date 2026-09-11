@@ -1,0 +1,32 @@
+# 공개 기본 설정입니다. 비공개 파인튜닝 모델 식별자는 저장하지 않으며,
+# 필요한 경우 환경변수(GEN_MODEL_ID, GRADING_MODEL_ID)로 전달합니다.
+# 대응 코드: src/generation/v3_final.py
+# 대응 프롬프트: prompts/generation/v3_cot.md
+
+generation:
+  # 문항 생성 모델 (기본값). 실제 실험에서는 이 base 모델을 파인튜닝하여 사용.
+  # 재현 시 GEN_MODEL_ID 환경변수로 실제 파인튜닝 모델 ID 주입.
+  model: gpt-4o-mini
+  temperature: 0.7
+
+validation:
+  # 정합성 검증 모델 (validate_problem_with_llm)
+  model: gpt-4o-mini
+  temperature: 0.1
+
+retrieval:
+  # 개념·공식 검색 (smart_get_few_shot_examples) — 코사인 유사도 기반
+  similarity_threshold: 0.6      # 유사도 임계값 미만인 개념·공식은 매칭에서 제외
+  top_k_concepts: 2              # 프롬프트에 주입하는 개념·공식 수
+  max_fewshot_examples: 4        # few-shot 예시문항 수 (성취기준 코드당 최대 1개, 총 4개)
+
+regeneration:
+  # 생성-검증 루프 (validate_and_regenerate_problem)
+  # 판정 조건: 정합성 검증 AND 형식성 검증 — 둘 다 통과해야 채택
+  max_attempts: 3                # 재생성 최대 시도 횟수, 초과 시 기존 코퍼스 문항으로 대체
+
+batch:
+  # generate_batch_problems 기준 (11개 단원 × 3난이도 × 3문제 = 99문항/회차)
+  problems_per_difficulty: 3
+  difficulties: ["하", "중", "상"]
+  max_duplicate_retries: 3       # 같은 단원·난이도 슬롯 내 중복 문제 회피 재시도 횟수
