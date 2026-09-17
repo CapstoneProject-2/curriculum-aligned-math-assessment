@@ -18,6 +18,14 @@ from common import get_validation_llm, get_unit_specific_conditions
 
 
 # -------------------------
+# 검증 단계에도 동일하게 전달할 난이도 가이드
+# (prompts/generation/v3_cot.md [생각4]와 동일한 정의 — 수정 시 두 곳을 함께 맞출 것)
+# -------------------------
+DIFFICULTY_GUIDE = """- 하: 기초 개념 및 단순 계산 위주
+- 중: 개념 응용 및 두 단계 이상의 풀이
+- 상: 실생활 맥락 포함 또는 사고력·전략적 접근 요구"""
+
+# -------------------------
 # 정합성 검증 프롬프트 템플릿
 # 원문: prompts/validation/consistency.md
 # -------------------------
@@ -43,6 +51,9 @@ validation_prompt = ChatPromptTemplate.from_messages([
     [문제 정보]
     단원: {unit_name}
     난이도: {difficulty}
+    
+    [난이도 가이드]
+    {difficulty_guide}
     
     [제공된 정답]
     {provided_answer}
@@ -89,6 +100,7 @@ def validate_problem_with_llm(parsed_problem, unit_name, difficulty, provided_an
             "provided_answer": answer,
             "provided_explanation": explanation,
             "unit_specific_conditions": unit_specific_conditions,
+            "difficulty_guide": DIFFICULTY_GUIDE,
             "json_schema": json_schema
         }
 
